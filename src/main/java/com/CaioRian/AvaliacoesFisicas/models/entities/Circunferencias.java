@@ -125,4 +125,31 @@ public class Circunferencias {
     @ManyToOne
     @JoinColumn(name = "id_aluno", nullable = false)
     private User aluno;
+
+    public Circunferencias(LocalDate data, Double altura, Double peso, Double imc, Double ombro, Double cintura, Double quadril, Double peitoral, Double abdommen, Double coxaProximalEsquerda, Double coxaProximalDireita, Double coxaMedialEsquerda, Double coxaMedialDireita, Double coxaDistalEsquerda, Double coxaDistalDireita, Double panturrilhaEsquerda, Double panturrilhaDireita, Double bracoRelaxadoEsquerdo, Double bracoRelaxadoDireito, Double bracoContraidoEsquerdo, Double bracoContraidoDireito, Double antebraçoEsquerdo, Double antebraçoDireito, User aluno) {
+        this.data = data;
+        this.altura = altura;
+        this.peso = peso;
+        this.imc = imc;
+        this.ombro = ombro;
+        this.cintura = cintura;
+        this.quadril = quadril;
+        this.peitoral = peitoral;
+        this.abdommen = abdommen;
+        this.coxaProximalEsquerda = coxaProximalEsquerda;
+        this.coxaProximalDireita = coxaProximalDireita;
+        this.coxaMedialEsquerda = coxaMedialEsquerda;
+        this.coxaMedialDireita = coxaMedialDireita;
+        this.coxaDistalEsquerda = coxaDistalEsquerda;
+        this.coxaDistalDireita = coxaDistalDireita;
+        this.panturrilhaEsquerda = panturrilhaEsquerda;
+        this.panturrilhaDireita = panturrilhaDireita;
+        this.bracoRelaxadoEsquerdo = bracoRelaxadoEsquerdo;
+        this.bracoRelaxadoDireito = bracoRelaxadoDireito;
+        this.bracoContraidoEsquerdo = bracoContraidoEsquerdo;
+        this.bracoContraidoDireito = bracoContraidoDireito;
+        this.antebraçoEsquerdo = antebraçoEsquerdo;
+        this.antebraçoDireito = antebraçoDireito;
+        this.aluno = aluno;
+    }
 }
