@@ -1,4 +1,4 @@
-package com.CaioRian.AvaliacoesFisicas.models;
+package com.CaioRian.AvaliacoesFisicas.models.entities;
 
 import com.CaioRian.AvaliacoesFisicas.models.enums.UserRole;
 import jakarta.persistence.*;
@@ -44,6 +44,14 @@ public class User implements UserDetails {
         this.login = login;
         this.password = password;
         this.role = role;
+    }
+
+    public User(String nome, Integer idade, String sexo, String login, String password) {
+        this.nome = nome;
+        this.idade = idade;
+        this.sexo = sexo;
+        this.login = login;
+        this.password = password;
     }
 
     /*@Override
