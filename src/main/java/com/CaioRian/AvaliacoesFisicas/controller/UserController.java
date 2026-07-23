@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -17,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.CaioRian.AvaliacoesFisicas.models.dto.PutRequestDto;
+import com.CaioRian.AvaliacoesFisicas.models.dto.UserPutRequestDto;
 import com.CaioRian.AvaliacoesFisicas.models.dto.UserResponseDto;
 import com.CaioRian.AvaliacoesFisicas.services.UserService;
 
@@ -48,7 +47,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDto> update(@PathVariable UUID id, @RequestBody @Valid PutRequestDto dto){
+    public ResponseEntity<UserResponseDto> update(@PathVariable UUID id, @RequestBody @Valid UserPutRequestDto dto){
         return ResponseEntity.status(HttpStatus.OK).body(this.userService.update(id, dto));
     }
 
