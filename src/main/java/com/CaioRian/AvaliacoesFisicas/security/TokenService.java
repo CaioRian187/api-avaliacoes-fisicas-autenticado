@@ -1,6 +1,6 @@
 package com.CaioRian.AvaliacoesFisicas.security;
 
-import com.CaioRian.AvaliacoesFisicas.models.User;
+import com.CaioRian.AvaliacoesFisicas.models.entities.User;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -24,6 +24,7 @@ public class TokenService {
             String token = JWT.create()
                     .withIssuer("avaliacoesFisicas")
                     .withSubject(user.getLogin())
+                    .withClaim("role", user.getRole().toString())
                     .withExpiresAt(genExpirationDate())
                     .sign(algorithm);
             return token;

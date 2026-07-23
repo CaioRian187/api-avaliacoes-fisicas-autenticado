@@ -1,38 +1,36 @@
 package com.CaioRian.AvaliacoesFisicas.controller;
 
-import com.CaioRian.AvaliacoesFisicas.models.User;
-import com.CaioRian.AvaliacoesFisicas.models.dto.AuthenticationDto;
-import com.CaioRian.AvaliacoesFisicas.models.dto.CadastroDto;
+import com.CaioRian.AvaliacoesFisicas.models.dto.UserResponseDto;
+import com.CaioRian.AvaliacoesFisicas.models.entities.User;
+import com.CaioRian.AvaliacoesFisicas.models.dto.LoginRequestDto;
+import com.CaioRian.AvaliacoesFisicas.models.dto.CadastroRequestDto;
 import com.CaioRian.AvaliacoesFisicas.models.dto.LoginResponseDto;
-import com.CaioRian.AvaliacoesFisicas.models.enums.UserRole;
-import com.CaioRian.AvaliacoesFisicas.repository.UserRepository;
 import com.CaioRian.AvaliacoesFisicas.security.TokenService;
+import com.CaioRian.AvaliacoesFisicas.services.UserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthorizationController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private TokenService tokenService;
+    private final AuthenticationManager authenticationManager;
+    private final UserService userService;
+    private final TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid AuthenticationDto data){
+    public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto data){
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
 
@@ -41,15 +39,8 @@ public class AuthorizationController {
         return ResponseEntity.ok(new LoginResponseDto(token));
     }
 
-    @PostMapping("/cadastrar")
-    public ResponseEntity cadastrar(@RequestBody @Valid CadastroDto dto){
-        if (this.userRepository.findByLogin(dto.login()) != null) return ResponseEntity.badRequest().build();
-
-        String encryptedPassword = new BCryptPasswordEncoder().encode(dto.password());
-        User newUser = new User(dto.nome(), dto.idade(), dto.sexo(), dto.login(), encryptedPassword, UserRole.USER);
-
-        this.userRepository.save(newUser);
-
-        return ResponseEntity.ok().build();
+    @PostMapping("/cadastro")
+    public ResponseEntity<UserResponseDto> cadastrar(@RequestBody @Valid CadastroRequestDto dto){
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.cadastrar(dto));
     }
 }
