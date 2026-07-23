@@ -1,10 +1,14 @@
 package com.CaioRian.AvaliacoesFisicas.controller;
 
-import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
+import com.CaioRian.AvaliacoesFisicas.models.dto.CircunferenciaRequestDto;
+import com.CaioRian.AvaliacoesFisicas.models.dto.CircunferenciaResponseDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,60 +20,41 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.CaioRian.AvaliacoesFisicas.models.Circunferencias;
 import com.CaioRian.AvaliacoesFisicas.services.UserService;
 import com.CaioRian.AvaliacoesFisicas.services.CircunferenciasService;
 
 import jakarta.validation.Valid;
 
+@Tag(name = "Circunferências")
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/circunferencias")
 @Validated
+@RequiredArgsConstructor
 public class CircunferenciasController {
     
-    @Autowired
-    private CircunferenciasService circunferenciasService;
-
-    @Autowired
-    private UserService alunoService;
+    private final CircunferenciasService circunferenciasService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Circunferencias> findById(@PathVariable Long id){
-        Circunferencias circunferencias = this.circunferenciasService.findById(id);
-
-        return ResponseEntity.ok().body(circunferencias);
-    }
-
-    @GetMapping("/aluno/{id_aluno}")
-    public ResponseEntity<List<Circunferencias>> findAllByAlunoId(@PathVariable UUID id_aluno){
-        this.alunoService.findById(id_aluno);
-        List<Circunferencias> list = this.circunferenciasService.findAllByAlunoId(id_aluno);
-        return ResponseEntity.ok().body(list);
+    public ResponseEntity<CircunferenciaResponseDto> findById(@PathVariable Long id){
+        CircunferenciaResponseDto circunferencias = this.circunferenciasService.findById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(circunferencias);
     }
 
     @GetMapping
-    public ResponseEntity<List<Circunferencias>> findAll(){
-        List<Circunferencias> list = this.circunferenciasService.findAll();
-        return ResponseEntity.ok().body(list);
+    public ResponseEntity<List<CircunferenciaResponseDto>> findAll(){
+        return ResponseEntity.status(HttpStatus.OK).body(this.circunferenciasService.findAll());
     }
 
     @PostMapping
-    public ResponseEntity<Void> createCircunferencia(@Valid @RequestBody Circunferencias circunferencias){
-        this.circunferenciasService.createCircunferencia(circunferencias);
-
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(circunferencias.getId()).toUri();
-
-        return ResponseEntity.created(uri).build();
+    public ResponseEntity<CircunferenciaResponseDto> createCircunferencia(@RequestBody @Valid CircunferenciaRequestDto dto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.circunferenciasService.createCircunferencia(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateCircunferencia(@Valid @RequestBody Circunferencias circunferencias, @PathVariable Long id){
-        circunferencias.setId(id);
-        circunferencias = this.circunferenciasService.updateCircunferencias(circunferencias);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<CircunferenciaResponseDto> updateCircunferencia(@RequestBody @Valid CircunferenciaRequestDto dto, @PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.OK).body(this.circunferenciasService.updateCircunferencias(dto, id));
     }
 
     @DeleteMapping("/{id}")

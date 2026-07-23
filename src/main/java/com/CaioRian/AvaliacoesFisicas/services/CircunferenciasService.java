@@ -1,88 +1,111 @@
 package com.CaioRian.AvaliacoesFisicas.services;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
+import com.CaioRian.AvaliacoesFisicas.models.entities.User;
+import com.CaioRian.AvaliacoesFisicas.models.dto.CircunferenciaRequestDto;
+import com.CaioRian.AvaliacoesFisicas.models.dto.CircunferenciaResponseDto;
+import com.CaioRian.AvaliacoesFisicas.models.mapper.CircunferenciaMapper;
+import com.CaioRian.AvaliacoesFisicas.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.CaioRian.AvaliacoesFisicas.exceptions.NotFoundException;
-import com.CaioRian.AvaliacoesFisicas.models.Circunferencias;
+import com.CaioRian.AvaliacoesFisicas.models.entities.Circunferencias;
 import com.CaioRian.AvaliacoesFisicas.repository.CircunferenciasRepository;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@RequiredArgsConstructor
 public class CircunferenciasService {
-    
-    @Autowired
-    private CircunferenciasRepository circunferenciasRepository;
 
-    public Circunferencias findById(Long id){
-        Optional<Circunferencias> circunferencia = this.circunferenciasRepository.findById(id);
-        return circunferencia.orElseThrow( () -> new NotFoundException("Circunferências de id " + id + " não encontradas."));
+    private final UserService userService;
+    private final CircunferenciasRepository circunferenciasRepository;
+
+    public CircunferenciaResponseDto findById(Long id) {
+        Circunferencias circunferencia = this.circunferenciasRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Circunferência de Id: " + id + " não encontrada")
+                );
+
+        return CircunferenciaMapper.toDtoFromEntity(circunferencia);
     }
 
-    public List<Circunferencias> findAllByAlunoId(UUID alunoId){
-        List<Circunferencias> list = this.circunferenciasRepository.findByAluno_id(alunoId);
-        if (list.isEmpty()){
-            throw new NotFoundException("Nehuma circunferência encontrada");
-        }
-        return list;
-    }
+    public List<CircunferenciaResponseDto> findAll(){
+        List<CircunferenciaResponseDto> list = this.circunferenciasRepository.findAll()
+                .stream()
+                .map(CircunferenciaMapper::toDtoFromEntity).toList();
 
-    public List<Circunferencias> findAll(){
-        List<Circunferencias> list = this.circunferenciasRepository.findAll();
         if (list.isEmpty()){
-            throw new NotFoundException("Nenhuma circunferência encontrada.");
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Nehuma circunferência encontrada"
+            );
         }
         return list;
     }
 
     @Transactional
-    public void createCircunferencia(Circunferencias circunferencias){
-        
-        double imc = (circunferencias.getPeso()/((circunferencias.getAltura()/100)*(circunferencias.getAltura()/100)));
+    public CircunferenciaResponseDto createCircunferencia(CircunferenciaRequestDto dto) {
+        User user = this.userService.findEntityById(dto.aluno_id());
+
+        double alturaMetros = dto.altura() / 100.0;
+        double imc = dto.peso() / (alturaMetros * alturaMetros);
         double imcFormatado = Math.round(imc * 100.0) / 100.0;
-        circunferencias.setImc(imcFormatado);
 
-        this.circunferenciasRepository.save(circunferencias);
+        Circunferencias circunferencia = CircunferenciaMapper.toEntityFromDto(dto, user, imcFormatado);
+
+        this.circunferenciasRepository.save(circunferencia);
+
+        return CircunferenciaMapper.toDtoFromEntity(circunferencia);
     }
 
     @Transactional
-    public Circunferencias updateCircunferencias(Circunferencias circunferencias){
-        Circunferencias newCircunferencias = this.findById(circunferencias.getId());
+    public CircunferenciaResponseDto updateCircunferencias(CircunferenciaRequestDto dto, Long id){
+        Circunferencias newCircunferencias = this.circunferenciasRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Circunferência não encontrada.")
+                );
 
-        newCircunferencias.setData(circunferencias.getData());
-        newCircunferencias.setAltura(circunferencias.getAltura());
-        newCircunferencias.setPeso(circunferencias.getPeso());
+        newCircunferencias.setData(dto.data());
+        newCircunferencias.setAltura(dto.altura());
+        newCircunferencias.setPeso(dto.peso());
 
-        double imc = (circunferencias.getPeso()/((circunferencias.getAltura()/100)*(circunferencias.getAltura()/100)));
-        double imcForatado = Math.round(imc * 100.0) / 100.0;
-        newCircunferencias.setImc(imcForatado);
+        double alturaMetros = dto.altura() / 100.0;
+        double imc = dto.peso() / (alturaMetros * alturaMetros);
+        double imcFormatado = Math.round(imc * 100.0) / 100.0;
+        newCircunferencias.setImc(imcFormatado);
 
-        newCircunferencias.setOmbro(circunferencias.getOmbro());
-        newCircunferencias.setCintura(circunferencias.getCintura());
-        newCircunferencias.setQuadril(circunferencias.getQuadril());
-        newCircunferencias.setPeitoral(circunferencias.getPeitoral());
-        newCircunferencias.setAbdommen(circunferencias.getAbdommen());
-        newCircunferencias.setCoxaProximalEsquerda(circunferencias.getCoxaProximalEsquerda());
-        newCircunferencias.setCoxaProximalDireita(circunferencias.getCoxaProximalDireita());
-        newCircunferencias.setCoxaMedialEsquerda(circunferencias.getCoxaMedialEsquerda());
-        newCircunferencias.setCoxaMedialDireita(circunferencias.getCoxaMedialDireita());
-        newCircunferencias.setCoxaDistalEsquerda(circunferencias.getCoxaDistalEsquerda());
-        newCircunferencias.setCoxaDistalDireita(circunferencias.getCoxaDistalDireita());
-        newCircunferencias.setPanturrilhaEsquerda(circunferencias.getPanturrilhaEsquerda());
-        newCircunferencias.setPanturrilhaDireita(circunferencias.getPanturrilhaDireita());
-        newCircunferencias.setBracoRelaxadoEsquerdo(circunferencias.getBracoRelaxadoEsquerdo());
-        newCircunferencias.setBracoRelaxadoDireito(circunferencias.getBracoRelaxadoDireito());
-        newCircunferencias.setBracoContraidoEsquerdo(circunferencias.getBracoContraidoEsquerdo());
-        newCircunferencias.setBracoContraidoDireito(circunferencias.getBracoContraidoDireito());
-        newCircunferencias.setAntebraçoEsquerdo(circunferencias.getAntebraçoEsquerdo());
-        newCircunferencias.setAntebraçoDireito(circunferencias.getAntebraçoDireito());
+        newCircunferencias.setOmbro(dto.ombro());
+        newCircunferencias.setCintura(dto.cintura());
+        newCircunferencias.setQuadril(dto.quadril());
+        newCircunferencias.setPeitoral(dto.peitoral());
+        newCircunferencias.setAbdommen(dto.abdommen());
+        newCircunferencias.setCoxaProximalEsquerda(dto.coxaProximalEsquerda());
+        newCircunferencias.setCoxaProximalDireita(dto.coxaProximalDireita());
+        newCircunferencias.setCoxaMedialEsquerda(dto.coxaMedialEsquerda());
+        newCircunferencias.setCoxaMedialDireita(dto.coxaMedialDireita());
+        newCircunferencias.setCoxaDistalEsquerda(dto.coxaDistalEsquerda());
+        newCircunferencias.setCoxaDistalDireita(dto.coxaDistalDireita());
+        newCircunferencias.setPanturrilhaEsquerda(dto.panturrilhaEsquerda());
+        newCircunferencias.setPanturrilhaDireita(dto.panturrilhaDireita());
+        newCircunferencias.setBracoRelaxadoEsquerdo(dto.bracoRelaxadoEsquerdo());
+        newCircunferencias.setBracoRelaxadoDireito(dto.bracoRelaxadoDireito());
+        newCircunferencias.setBracoContraidoEsquerdo(dto.bracoContraidoEsquerdo());
+        newCircunferencias.setBracoContraidoDireito(dto.bracoContraidoDireito());
+        newCircunferencias.setAntebraçoEsquerdo(dto.antebraçoEsquerdo());
+        newCircunferencias.setAntebraçoDireito(dto.antebraçoDireito());
 
-        return this.circunferenciasRepository.save(newCircunferencias);
+        this.circunferenciasRepository.save(newCircunferencias);
+
+        return CircunferenciaMapper.toDtoFromEntity(newCircunferencias);
     }
 
     public void deletarCircunferencia(Long id){

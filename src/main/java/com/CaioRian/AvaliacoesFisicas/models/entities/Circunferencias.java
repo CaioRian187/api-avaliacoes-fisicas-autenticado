@@ -1,4 +1,4 @@
-package com.CaioRian.AvaliacoesFisicas.models;
+package com.CaioRian.AvaliacoesFisicas.models.entities;
 
 import java.time.LocalDate;
 
@@ -43,7 +43,7 @@ public class Circunferencias {
     @NotNull
     private Double peso;
 
-    @Column(name = "imc", nullable = true)
+    @Column(name = "imc")
     private Double imc;
 
     @Column(name = "ombro", nullable = false)
