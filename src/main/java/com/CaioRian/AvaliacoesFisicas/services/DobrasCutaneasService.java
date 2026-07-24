@@ -1,128 +1,165 @@
 package com.CaioRian.AvaliacoesFisicas.services;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
+import com.CaioRian.AvaliacoesFisicas.models.entities.User;
+import com.CaioRian.AvaliacoesFisicas.models.dto.DobrasRequestDto;
+import com.CaioRian.AvaliacoesFisicas.models.dto.DobrasResponseDto;
+import com.CaioRian.AvaliacoesFisicas.models.mapper.DobrasCutaneasMapper;
+import com.CaioRian.AvaliacoesFisicas.repository.CircunferenciasRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.CaioRian.AvaliacoesFisicas.exceptions.NotFoundException;
-import com.CaioRian.AvaliacoesFisicas.models.Circunferencias;
-import com.CaioRian.AvaliacoesFisicas.models.DobrasCutaneas;
+import com.CaioRian.AvaliacoesFisicas.models.entities.Circunferencias;
+import com.CaioRian.AvaliacoesFisicas.models.entities.DobrasCutaneas;
 import com.CaioRian.AvaliacoesFisicas.repository.DobrasCutaneasRepository;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@RequiredArgsConstructor
 public class DobrasCutaneasService {
     
-    @Autowired
-    private DobrasCutaneasRepository dobrasCutaneasRepository;
-
-    @Autowired
-    private CircunferenciasService circunferenciasService;
+    private final DobrasCutaneasRepository dobrasCutaneasRepository;
+    private final CircunferenciasService circunferenciasService;
+    private final CircunferenciasRepository circunferenciasRepository;
+    private final UserService userService;
     
-    public DobrasCutaneas findById(Long id){
-        Optional<DobrasCutaneas> dobrasCutaneas = this.dobrasCutaneasRepository.findById(id);
+    public DobrasResponseDto findById(Long id){
+        DobrasCutaneas dobras = this.dobrasCutaneasRepository.findById(id)
+                .orElseThrow( () -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Dobras de Id: " + id + " não encontradas.")
+                );
 
-        return dobrasCutaneas.orElseThrow( () -> new NotFoundException("Dobras cutâneas não encontradas."));
+        return DobrasCutaneasMapper.toDtoFromEntity(dobras);
     }
 
-    public List<DobrasCutaneas> findAllByAlunoId(UUID id){
-        List<DobrasCutaneas> list = this.dobrasCutaneasRepository.findByAluno_id(id);
+    public List<DobrasResponseDto> findAllByAlunoId(UUID id){
+        List<DobrasResponseDto> list = this.dobrasCutaneasRepository.findByAluno_id(id)
+                .stream()
+                .map(DobrasCutaneasMapper::toDtoFromEntity).toList();
+
         if (list.isEmpty()){
-            throw new NotFoundException("Dobras Cutâneas não encontradas.");
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Dobras Cutâneas não encontradas.");
         }
         return list;
     }
 
-    public List<DobrasCutaneas> findAll(){
-        List<DobrasCutaneas> list = this.dobrasCutaneasRepository.findAll();
+    public List<DobrasResponseDto> findAll(){
+        List<DobrasResponseDto> list = this.dobrasCutaneasRepository.findAll()
+                .stream()
+                .map(DobrasCutaneasMapper::toDtoFromEntity).toList();
+
         if (list.isEmpty()){
-            throw new NotFoundException("Dobras Cutâneas não encontradas.");
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Dobras Cutâneas não encontradas.");
         }
         return list;
     }
 
     @Transactional
-    public void createDobras(DobrasCutaneas dobrasCutaneas, UUID alunoId) {
-        List<Circunferencias> lista = this.circunferenciasService.findAllByAlunoId(alunoId);
-        if (lista.isEmpty()) {
-           throw new NotFoundException("O aluno precisa ter circunferências antes de cadastrar dobras.");
-        }
+    public DobrasResponseDto createDobras(DobrasRequestDto dto) {
+
+        User aluno = this.userService.findEntityById(dto.aluno_id());
+
+        List<Circunferencias> lista = this.circunferenciasRepository.findAllByAluno_Id(dto.aluno_id());
         Circunferencias circ = lista.get(lista.size() - 1);
-        dobrasCutaneas.setAluno(circ.getAluno());
+
         double rcqBruto = circ.getCintura() / circ.getQuadril();
         double rcqFormatado = Math.round(rcqBruto * 100.0) / 100.0;
-        dobrasCutaneas.setRelacaoCinturaQuadril(rcqFormatado);
 
+        double somatorioMasculino = dto.peitoral() + dto.abdominal() + dto.coxa();
+        double somatorioFeminino = dto.triceps() + dto.suprailiaca() + dto.coxa();
 
-        double somatorioMasculino = dobrasCutaneas.getPeitoral() + dobrasCutaneas.getAbdominal() + dobrasCutaneas.getCoxa();
-        double somatorioFeminino = dobrasCutaneas.getTriceps() + dobrasCutaneas.getSuprailiaca() + dobrasCutaneas.getCoxa();
-        String sexo = dobrasCutaneas.getAluno().getSexo();
-        int idade = dobrasCutaneas.getAluno().getIdade();
-
+        String sexo = aluno.getSexo();
+        int idade = aluno.getIdade();
         double densidade = 0;
-        if ("Masculino".equalsIgnoreCase(sexo)){
+        double percentualGorduraFormatado = 0;
+
+        if ("Masculino".equalsIgnoreCase(sexo)) {
             densidade = 1.109380 - (0.0008267 * somatorioMasculino) + (0.0000016 * Math.pow(somatorioMasculino, 2)) - (0.0002574 * idade);
-        }
-        if ("Feminino".equalsIgnoreCase(sexo)){
+        } else if ("Feminino".equalsIgnoreCase(sexo)) {
             densidade = 1.099421 - (0.0009929 * somatorioFeminino) + (0.0000023 * Math.pow(somatorioFeminino, 2)) - (0.0001392 * idade);
         }
 
-        if (densidade > 0){
-        double percentual = ((4.95 / densidade) - 4.50) * 100;
-        double percentualFormatado = Math.round(percentual * 100.0) / 100.0;
-        dobrasCutaneas.setPercentualGordura(percentualFormatado);
-        }else{
-            dobrasCutaneas.setPercentualGordura(0.0);
+        if (densidade > 0) {
+            double percentual = ((4.95 / densidade) - 4.50) * 100;
+            percentualGorduraFormatado = Math.round(percentual * 100.0) / 100.0;
+        } else {
+            percentualGorduraFormatado = 0.0;
         }
-        this.dobrasCutaneasRepository.save(dobrasCutaneas);
+
+        DobrasCutaneas dobras = DobrasCutaneasMapper.toEntityFromDto(dto, aluno, rcqFormatado, percentualGorduraFormatado);
+
+        this.dobrasCutaneasRepository.save(dobras);
+
+        return DobrasCutaneasMapper.toDtoFromEntity(dobras);
     }
 
     @Transactional
-    public DobrasCutaneas updateDobras(DobrasCutaneas dobrasCutaneas,UUID alunoId){
-        DobrasCutaneas newDobrasCutaneas = this.findById(dobrasCutaneas.getId());
+    public DobrasResponseDto updateDobras(Long id, DobrasRequestDto dto) {
 
-        newDobrasCutaneas.setData(dobrasCutaneas.getData());
-        newDobrasCutaneas.setBiceps(dobrasCutaneas.getBiceps());
-        newDobrasCutaneas.setTriceps(dobrasCutaneas.getTriceps());
-        newDobrasCutaneas.setSubescapular(dobrasCutaneas.getSubescapular());
-        newDobrasCutaneas.setPanturrilhaMedial(dobrasCutaneas.getPanturrilhaMedial());
-        newDobrasCutaneas.setAbdominal(dobrasCutaneas.getAbdominal());
-        newDobrasCutaneas.setSuprailiaca(dobrasCutaneas.getSuprailiaca());
-        newDobrasCutaneas.setCoxa(dobrasCutaneas.getCoxa());
-        newDobrasCutaneas.setPeitoral(dobrasCutaneas.getPeitoral());
+        User aluno = this.userService.findEntityById(dto.aluno_id());
 
-        List<Circunferencias> lista = this.circunferenciasService.findAllByAlunoId(alunoId);
-        Circunferencias circ = lista.get(lista.size() - 1);
-        double rcqBruto = circ.getCintura() / circ.getQuadril();
-        double rcqFormatado = Math.round(rcqBruto * 100.0) / 100.0;
-        newDobrasCutaneas.setRelacaoCinturaQuadril(rcqFormatado);
+        DobrasCutaneas dobras = this.dobrasCutaneasRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Registro de dobras cutâneas não encontrado."));
 
-        double somatorioMasculino = dobrasCutaneas.getPeitoral() + dobrasCutaneas.getAbdominal() + dobrasCutaneas.getCoxa();
-        double somatorioFeminino = dobrasCutaneas.getTriceps() + dobrasCutaneas.getSuprailiaca() + dobrasCutaneas.getCoxa();
-        String sexo = newDobrasCutaneas.getAluno().getSexo();
-        int idade = newDobrasCutaneas.getAluno().getIdade();
-
-        double densidade = 0;
-        if ("Masculino".equalsIgnoreCase(sexo)){
-            densidade = 1.109380 - (0.0008267 * somatorioMasculino) + (0.0000016 * Math.pow(somatorioMasculino, 2)) - (0.0002574 * idade);
+        List<Circunferencias> listaCirc = this.circunferenciasRepository.findAllByAluno_Id(aluno.getId());
+        if (listaCirc.isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "O aluno precisa ter circunferências cadastradas para atualizar as dobras.");
         }
-        if ("Feminino".equalsIgnoreCase(sexo)){
+        Circunferencias circ = listaCirc.get(listaCirc.size() - 1);
+
+        dobras.setData(dto.data());
+        dobras.setBiceps(dto.biceps());
+        dobras.setTriceps(dto.triceps());
+        dobras.setPeitoral(dto.peitoral());
+        dobras.setSubescapular(dto.subescapular());
+        dobras.setPanturrilhaMedial(dto.panturrilhaMedial());
+        dobras.setAbdominal(dto.abdominal());
+        dobras.setSuprailiaca(dto.suprailiaca());
+        dobras.setCoxa(dto.coxa());
+
+        double rcqBruto = circ.getCintura() / circ.getQuadril();
+        dobras.setRelacaoCinturaQuadril(Math.round(rcqBruto * 100.0) / 100.0);
+
+        double somatorioMasculino = dto.peitoral() + dto.abdominal() + dto.coxa();
+        double somatorioFeminino = dto.triceps() + dto.suprailiaca() + dto.coxa();
+
+        String sexo = aluno.getSexo();
+        int idade = aluno.getIdade();
+        double densidade = 0;
+        double percentualGorduraFormatado = 0;
+
+
+        if ("Masculino".equalsIgnoreCase(sexo)) {
+            densidade = 1.109380 - (0.0008267 * somatorioMasculino) + (0.0000016 * Math.pow(somatorioMasculino, 2)) - (0.0002574 * idade);
+        } else if ("Feminino".equalsIgnoreCase(sexo)) {
             densidade = 1.099421 - (0.0009929 * somatorioFeminino) + (0.0000023 * Math.pow(somatorioFeminino, 2)) - (0.0001392 * idade);
         }
 
-        if (densidade > 0){
-        double percentual = ((4.95 / densidade) - 4.50) * 100;
-        double percentualFormatado = Math.round(percentual * 100.0) /100.0;
-        newDobrasCutaneas.setPercentualGordura(percentualFormatado);
+        if (densidade > 0) {
+            double percentual = ((4.95 / densidade) - 4.50) * 100;
+            dobras.setPercentualGordura(Math.round(percentual * 100.0) / 100.0);
+        } else {
+            dobras.setPercentualGordura(0.0);
         }
-        else{
-            newDobrasCutaneas.setPercentualGordura(0.0);
-        }
-        return this.dobrasCutaneasRepository.save(newDobrasCutaneas);
+
+        this.dobrasCutaneasRepository.save(dobras);
+        return DobrasCutaneasMapper.toDtoFromEntity(dobras);
     }
 
     public void deletarDobras(Long id){

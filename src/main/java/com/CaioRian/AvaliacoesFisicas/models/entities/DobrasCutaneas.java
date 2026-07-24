@@ -1,4 +1,4 @@
-package com.CaioRian.AvaliacoesFisicas.models;
+package com.CaioRian.AvaliacoesFisicas.models.entities;
 
 import java.time.LocalDate;
 
@@ -77,4 +77,19 @@ public class DobrasCutaneas {
     @JoinColumn(name = "id_aluno", nullable = false)
     private User aluno;
 
+
+    public DobrasCutaneas(LocalDate data, Double biceps, Double peitoral, Double triceps, Double subescapular, Double panturrilhaMedial, Double abdominal, Double suprailiaca, Double coxa, Double relacaoCinturaQuadril, Double percentualGordura, User aluno) {
+        this.data = data;
+        this.biceps = biceps;
+        this.peitoral = peitoral;
+        this.triceps = triceps;
+        this.subescapular = subescapular;
+        this.panturrilhaMedial = panturrilhaMedial;
+        this.abdominal = abdominal;
+        this.suprailiaca = suprailiaca;
+        this.coxa = coxa;
+        this.relacaoCinturaQuadril = relacaoCinturaQuadril;
+        this.percentualGordura = percentualGordura;
+        this.aluno = aluno;
+    }
 }

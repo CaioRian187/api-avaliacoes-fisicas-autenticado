@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.CaioRian.AvaliacoesFisicas.models.DobrasCutaneas;
+import com.CaioRian.AvaliacoesFisicas.models.entities.DobrasCutaneas;
 
 public interface DobrasCutaneasRepository extends JpaRepository<DobrasCutaneas, Long>{
     
