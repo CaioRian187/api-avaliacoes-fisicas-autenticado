@@ -9,13 +9,11 @@ import com.CaioRian.AvaliacoesFisicas.models.dto.DobrasResponseDto;
 import com.CaioRian.AvaliacoesFisicas.models.mapper.DobrasCutaneasMapper;
 import com.CaioRian.AvaliacoesFisicas.repository.CircunferenciasRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.CaioRian.AvaliacoesFisicas.exceptions.NotFoundException;
 import com.CaioRian.AvaliacoesFisicas.models.entities.Circunferencias;
 import com.CaioRian.AvaliacoesFisicas.models.entities.DobrasCutaneas;
 import com.CaioRian.AvaliacoesFisicas.repository.DobrasCutaneasRepository;

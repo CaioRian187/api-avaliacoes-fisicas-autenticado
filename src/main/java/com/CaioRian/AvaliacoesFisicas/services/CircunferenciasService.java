@@ -1,21 +1,17 @@
 package com.CaioRian.AvaliacoesFisicas.services;
 
 import java.util.List;
-import java.util.UUID;
 
 import com.CaioRian.AvaliacoesFisicas.models.entities.User;
 import com.CaioRian.AvaliacoesFisicas.models.dto.CircunferenciaRequestDto;
 import com.CaioRian.AvaliacoesFisicas.models.dto.CircunferenciaResponseDto;
 import com.CaioRian.AvaliacoesFisicas.models.mapper.CircunferenciaMapper;
-import com.CaioRian.AvaliacoesFisicas.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.CaioRian.AvaliacoesFisicas.exceptions.NotFoundException;
 import com.CaioRian.AvaliacoesFisicas.models.entities.Circunferencias;
 import com.CaioRian.AvaliacoesFisicas.repository.CircunferenciasRepository;
 import org.springframework.web.server.ResponseStatusException;
