@@ -13,12 +13,6 @@ import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorMessage> NotFoundExceptionHander(NotFoundException exception){
-        ErrorMessage response = new ErrorMessage(HttpStatus.NOT_FOUND, exception.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-    }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Map<String, String>> DataIntegrityViolationExceptionHandler(DataIntegrityViolationException exception){
