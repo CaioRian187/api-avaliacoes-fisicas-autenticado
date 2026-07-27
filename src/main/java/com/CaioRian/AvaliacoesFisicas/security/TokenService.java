@@ -25,6 +25,7 @@ public class TokenService {
                     .withIssuer("avaliacoesFisicas")
                     .withSubject(user.getLogin())
                     .withClaim("role", user.getRole().toString())
+                    .withClaim("id", user.getId().toString())
                     .withExpiresAt(genExpirationDate())
                     .sign(algorithm);
             return token;
