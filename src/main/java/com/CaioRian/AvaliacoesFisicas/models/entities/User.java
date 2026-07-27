@@ -30,6 +30,7 @@ public class User implements UserDetails {
 
     private String sexo;
 
+    @Column(unique = true)
     private String login;
 
     private String password;
