@@ -7,7 +7,6 @@ import com.CaioRian.AvaliacoesFisicas.models.dto.CircunferenciaRequestDto;
 import com.CaioRian.AvaliacoesFisicas.models.dto.CircunferenciaResponseDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.CaioRian.AvaliacoesFisicas.services.UserService;
 import com.CaioRian.AvaliacoesFisicas.services.CircunferenciasService;
 
 import jakarta.validation.Valid;
@@ -45,6 +43,11 @@ public class CircunferenciasController {
     @GetMapping
     public ResponseEntity<List<CircunferenciaResponseDto>> findAll(){
         return ResponseEntity.status(HttpStatus.OK).body(this.circunferenciasService.findAll());
+    }
+
+    @GetMapping("aluno/{id_aluno}")
+    public ResponseEntity<List<CircunferenciaResponseDto>> findAllByAlunoId(@PathVariable UUID id_aluno){
+        return ResponseEntity.status(HttpStatus.OK).body(this.circunferenciasService.findAllByAlunoId(id_aluno));
     }
 
     @PostMapping

@@ -1,7 +1,5 @@
 package com.CaioRian.AvaliacoesFisicas.models.dto;
 
-import com.CaioRian.AvaliacoesFisicas.models.entities.Circunferencias;
-import com.CaioRian.AvaliacoesFisicas.models.mapper.UserMappper;
 import com.CaioRian.AvaliacoesFisicas.models.projections.UserProjection;
 
 import java.time.LocalDate;
@@ -25,7 +23,7 @@ public record CircunferenciaResponseDto(
 
         Double peitoral,
 
-        Double abdommen,
+        Double abdomen,
 
         Double coxaProximalEsquerda,
 
