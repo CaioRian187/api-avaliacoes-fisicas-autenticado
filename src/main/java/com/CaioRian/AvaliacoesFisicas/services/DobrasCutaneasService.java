@@ -69,7 +69,7 @@ public class DobrasCutaneasService {
 
         User aluno = this.userService.findEntityById(dto.aluno_id());
 
-        List<Circunferencias> lista = this.circunferenciasRepository.findAllByAluno_Id(dto.aluno_id());
+        List<Circunferencias> lista = this.circunferenciasRepository.findAllByAlunoId(dto.aluno_id());
         Circunferencias circ = lista.get(lista.size() - 1);
 
         double rcqBruto = circ.getCintura() / circ.getQuadril();
@@ -113,7 +113,7 @@ public class DobrasCutaneasService {
                         HttpStatus.NOT_FOUND,
                         "Registro de dobras cutâneas não encontrado."));
 
-        List<Circunferencias> listaCirc = this.circunferenciasRepository.findAllByAluno_Id(aluno.getId());
+        List<Circunferencias> listaCirc = this.circunferenciasRepository.findAllByAlunoId(aluno.getId());
         if (listaCirc.isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,

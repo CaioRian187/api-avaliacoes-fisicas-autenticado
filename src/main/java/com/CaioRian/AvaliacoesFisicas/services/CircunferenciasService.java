@@ -1,6 +1,7 @@
 package com.CaioRian.AvaliacoesFisicas.services;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.CaioRian.AvaliacoesFisicas.models.entities.User;
 import com.CaioRian.AvaliacoesFisicas.models.dto.CircunferenciaRequestDto;
@@ -45,6 +46,11 @@ public class CircunferenciasService {
             );
         }
         return list;
+    }
+
+    public List<CircunferenciaResponseDto> findAllByAlunoId(UUID alunoId){
+        return this.circunferenciasRepository.findAllByAlunoId(alunoId)
+                .stream().map(CircunferenciaMapper::toDtoFromEntity).toList();
     }
 
     @Transactional
