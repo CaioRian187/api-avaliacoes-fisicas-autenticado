@@ -41,6 +41,7 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.POST, "/auth/cadastro").permitAll()
 
                     .requestMatchers(HttpMethod.GET, "/api/user/listar-usuarios").hasAnyAuthority("ADMIN")
+                    .requestMatchers(HttpMethod.GET, "/api/user/listar-usuarios-projetions").hasAnyAuthority("ADMIN")
                     .requestMatchers(HttpMethod.GET, "/api/user/nome").hasAnyAuthority("ADMIN")
                     .requestMatchers(HttpMethod.GET, "/api/user").hasAnyAuthority("ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/api/user").hasAnyAuthority("ADMIN")

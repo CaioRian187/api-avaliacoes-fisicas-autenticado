@@ -89,7 +89,7 @@ public class CircunferenciasService {
         newCircunferencias.setCintura(dto.cintura());
         newCircunferencias.setQuadril(dto.quadril());
         newCircunferencias.setPeitoral(dto.peitoral());
-        newCircunferencias.setAbdommen(dto.abdommen());
+        newCircunferencias.setAbdommen(dto.abdomen());
         newCircunferencias.setCoxaProximalEsquerda(dto.coxaProximalEsquerda());
         newCircunferencias.setCoxaProximalDireita(dto.coxaProximalDireita());
         newCircunferencias.setCoxaMedialEsquerda(dto.coxaMedialEsquerda());
