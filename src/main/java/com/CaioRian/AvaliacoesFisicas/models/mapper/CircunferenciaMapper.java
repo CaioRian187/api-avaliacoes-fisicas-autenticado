@@ -53,7 +53,7 @@ public abstract class CircunferenciaMapper {
                 dto.cintura(),
                 dto.quadril(),
                 dto.peitoral(),
-                dto.abdommen(),
+                dto.abdomen(),
                 dto.coxaProximalEsquerda(),
                 dto.coxaProximalDireita(),
                 dto.coxaMedialEsquerda(),

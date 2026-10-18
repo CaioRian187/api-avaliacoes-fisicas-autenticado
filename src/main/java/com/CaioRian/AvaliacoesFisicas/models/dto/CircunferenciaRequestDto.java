@@ -29,7 +29,7 @@ public record CircunferenciaRequestDto(
         Double peitoral,
 
         @NotNull(message = "O abdômen não pode ser nulo")
-        Double abdommen,
+        Double abdomen,
 
         @NotNull(message = "A coxa proximal esquerda não pode ser nula.")
         Double coxaProximalEsquerda,
