@@ -8,6 +8,7 @@ import com.CaioRian.AvaliacoesFisicas.models.dto.CadastroRequestDto;
 import com.CaioRian.AvaliacoesFisicas.models.dto.UserResponseDto;
 import com.CaioRian.AvaliacoesFisicas.models.enums.UserRole;
 import com.CaioRian.AvaliacoesFisicas.models.mapper.UserMappper;
+import com.CaioRian.AvaliacoesFisicas.models.projections.UserProjection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -63,6 +64,18 @@ public class UserService {
         return this.userRepository.findAll()
                 .stream()
                 .map(UserMappper::fromEntityToDto).toList();
+    }
+
+    public List<UserProjection> findAllUserProjetion(){
+        return userRepository.findAll()
+                .stream().map(user -> {
+                    return new UserProjection(
+                            user.getId(),
+                            user.getNome(),
+                            user.getIdade(),
+                            user.getSexo()
+                    );
+                }).toList();
     }
 
     @Transactional
