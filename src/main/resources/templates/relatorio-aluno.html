@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Relatório de Avaliação Física</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 16mm 14mm 18mm 14mm;
+        }
+
+        * {
+            font-family: Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            color: #334155;
+            font-size: 11px;
+        }
+
+        .cabecalho {
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 12px;
+            margin-bottom: 22px;
+        }
+
+        .identidade {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .identidade td {
+            border: none;
+            padding: 0;
+            vertical-align: middle;
+        }
+
+        .identidade .logo {
+            width: 72px;
+        }
+
+        .identidade .logo img {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .identidade .titulos {
+            text-align: center;
+        }
+
+        .cabecalho h1 {
+            color: #1e293b;
+            font-size: 20px;
+            margin: 0 0 6px 0;
+        }
+
+        .cabecalho .data-avaliacao {
+            color: #64748b;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        h2 {
+            color: #1e293b;
+            font-size: 14px;
+            border-left: 4px solid #2563eb;
+            background-color: #eff6ff;
+            padding: 7px 10px;
+            margin: 22px 0 10px 0;
+            page-break-after: avoid;
+            break-after: avoid;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 14px;
+        }
+
+        table.registro {
+            margin-bottom: 18px;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        th, td {
+            border: 1px solid #e5e7eb;
+            padding: 6px 8px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #2563eb;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        td.rotulo {
+            background-color: #f1f5f9;
+            color: #334155;
+            font-weight: bold;
+            width: 40%;
+        }
+
+        .subtitulo-registro {
+            background-color: #dbeafe;
+            color: #1e40af;
+            font-weight: bold;
+        }
+
+        .sem-registros {
+            border: 1px dashed #93c5fd;
+            background-color: #eff6ff;
+            color: #64748b;
+            font-style: italic;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+
+        .quebra-pagina {
+            page-break-before: always;
+            break-before: page;
+        }
+    </style>
+</head>
+<body>
+
+<header class="cabecalho">
+    <table class="identidade">
+        <tr>
+            <td class="logo">
+                <img th:if="${logoDataUri}" th:src="${logoDataUri}" alt="Logo da aplicação" />
+            </td>
+            <td class="titulos">
+                <h1>Relatório de Avaliação Física</h1>
+                <p class="data-avaliacao" th:text="'Data da Avaliação: ' + ${dataFormatada}">Data da Avaliação: --/--/----</p>
+            </td>
+        </tr>
+    </table>
+</header>
+
+<section>
+    <h2>Dados do Aluno</h2>
+    <table>
+        <tbody>
+        <tr>
+            <td class="rotulo">Nome</td>
+            <td th:text="${aluno.nome}">-</td>
+        </tr>
+        <tr>
+            <td class="rotulo">Idade</td>
+            <td th:text="${aluno.idade}">-</td>
+        </tr>
+        <tr>
+            <td class="rotulo">Sexo</td>
+            <td th:text="${aluno.sexo}">-</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Tabela 1 - Circunferências</h2>
+
+    <div class="sem-registros" th:if="${#lists.isEmpty(circunferencias)}">
+        Sem registros nesta data
+    </div>
+
+    <div th:unless="${#lists.isEmpty(circunferencias)}">
+        <table class="registro" th:each="c : ${circunferencias}">
+            <tbody>
+            <tr th:if="${#lists.size(circunferencias) > 1}">
+                <td class="subtitulo-registro" colspan="2"
+                    th:text="'Registro - ' + ${c.data}">Registro</td>
+            </tr>
+            <tr><td class="rotulo">Altura (cm)</td><td th:text="${c.altura} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Peso (kg)</td><td th:text="${c.peso} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">IMC</td><td th:text="${c.imc} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Ombro</td><td th:text="${c.ombro} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Cintura</td><td th:text="${c.cintura} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Quadril</td><td th:text="${c.quadril} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Peitoral</td><td th:text="${c.peitoral} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Abdômen</td><td th:text="${c.abdommen} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Coxa Proximal Esquerda</td><td th:text="${c.coxaProximalEsquerda} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Coxa Proximal Direita</td><td th:text="${c.coxaProximalDireita} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Coxa Medial Esquerda</td><td th:text="${c.coxaMedialEsquerda} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Coxa Medial Direita</td><td th:text="${c.coxaMedialDireita} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Coxa Distal Esquerda</td><td th:text="${c.coxaDistalEsquerda} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Coxa Distal Direita</td><td th:text="${c.coxaDistalDireita} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Panturrilha Esquerda</td><td th:text="${c.panturrilhaEsquerda} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Panturrilha Direita</td><td th:text="${c.panturrilhaDireita} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Braço Relaxado Esquerdo</td><td th:text="${c.bracoRelaxadoEsquerdo} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Braço Relaxado Direito</td><td th:text="${c.bracoRelaxadoDireito} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Braço Contraído Esquerdo</td><td th:text="${c.bracoContraidoEsquerdo} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Braço Contraído Direito</td><td th:text="${c.bracoContraidoDireito} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Antebraço Esquerdo</td><td th:text="${c.antebraçoEsquerdo} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Antebraço Direito</td><td th:text="${c.antebraçoDireito} ?: '-'">-</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="quebra-pagina">
+    <h2>Tabela 2 - Dobras Cutâneas</h2>
+
+    <div class="sem-registros" th:if="${#lists.isEmpty(dobras)}">
+        Sem registros nesta data
+    </div>
+
+    <div th:unless="${#lists.isEmpty(dobras)}">
+        <table class="registro" th:each="d : ${dobras}">
+            <tbody>
+            <tr th:if="${#lists.size(dobras) > 1}">
+                <td class="subtitulo-registro" colspan="2"
+                    th:text="'Registro - ' + ${d.data}">Registro</td>
+            </tr>
+            <tr><td class="rotulo">Bíceps</td><td th:text="${d.biceps} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Peitoral</td><td th:text="${d.peitoral} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Tríceps</td><td th:text="${d.triceps} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Subescapular</td><td th:text="${d.subescapular} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Panturrilha Medial</td><td th:text="${d.panturrilhaMedial} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Abdominal</td><td th:text="${d.abdominal} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Supra-ilíaca</td><td th:text="${d.suprailiaca} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Coxa</td><td th:text="${d.coxa} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Relação Cintura/Quadril</td><td th:text="${d.relacaoCinturaQuadril} ?: '-'">-</td></tr>
+            <tr><td class="rotulo">Percentual de Gordura (%)</td><td th:text="${d.percentualGordura} ?: '-'">-</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+</body>
+</html>

@@ -1,5 +1,6 @@
 package com.CaioRian.AvaliacoesFisicas.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,4 +17,7 @@ public interface CircunferenciasRepository extends JpaRepository<Circunferencias
 
     @Query("SELECT c FROM Circunferencias c WHERE c.aluno.id = :alunoId")
     List<Circunferencias> findAllByAlunoId(@Param("alunoId") UUID alunoId);
+
+    @Query("SELECT c FROM Circunferencias c WHERE c.aluno.id = :alunoId AND c.data = :data")
+    List<Circunferencias> findByAlunoIdAndData(@Param("alunoId") UUID alunoId, @Param("data") LocalDate data);
 }
