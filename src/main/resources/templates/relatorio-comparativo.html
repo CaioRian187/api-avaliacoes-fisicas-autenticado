@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Relatório Comparativo de Avaliação Física</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 16mm 14mm 18mm 14mm;
+        }
+
+        * {
+            font-family: Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            color: #334155;
+            font-size: 11px;
+        }
+
+        .cabecalho {
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 12px;
+            margin-bottom: 22px;
+        }
+
+        .identidade {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .identidade td {
+            border: none;
+            padding: 0;
+            vertical-align: middle;
+        }
+
+        .identidade .logo {
+            width: 72px;
+        }
+
+        .identidade .logo img {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .identidade .titulos {
+            text-align: center;
+        }
+
+        .cabecalho h1 {
+            color: #1e293b;
+            font-size: 20px;
+            margin: 0 0 6px 0;
+        }
+
+        .cabecalho .periodo {
+            color: #64748b;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        h2 {
+            color: #1e293b;
+            font-size: 14px;
+            border-left: 4px solid #2563eb;
+            background-color: #eff6ff;
+            padding: 7px 10px;
+            margin: 22px 0 10px 0;
+            page-break-after: avoid;
+            break-after: avoid;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 14px;
+        }
+
+        table.registro {
+            margin-bottom: 18px;
+            page-break-inside: auto;
+            break-inside: auto;
+        }
+
+        th, td {
+            border: 1px solid #e5e7eb;
+            padding: 6px 8px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #2563eb;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        td.rotulo {
+            background-color: #f1f5f9;
+            color: #334155;
+            font-weight: bold;
+            width: 40%;
+        }
+
+        .comparativo td.metrica {
+            background-color: #f8fafc;
+            color: #334155;
+            font-weight: bold;
+            width: 34%;
+        }
+
+        .comparativo td.valor {
+            text-align: center;
+        }
+
+        .comparativo td.evolucao {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .evolucao-aumento {
+            color: #b91c1c;
+        }
+
+        .evolucao-reducao {
+            color: #15803d;
+        }
+
+        .evolucao-estavel,
+        .evolucao-neutro {
+            color: #64748b;
+        }
+
+        .sem-registros {
+            border: 1px dashed #93c5fd;
+            background-color: #eff6ff;
+            color: #64748b;
+            font-style: italic;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+
+        .quebra-pagina {
+            page-break-before: always;
+            break-before: page;
+        }
+    </style>
+</head>
+<body>
+
+<header class="cabecalho">
+    <table class="identidade">
+        <tr>
+            <td class="logo">
+                <img th:if="${logoDataUri}" th:src="${logoDataUri}" alt="Logo da aplicação" />
+            </td>
+            <td class="titulos">
+                <h1>Relatório Comparativo de Avaliação Física</h1>
+                <p class="periodo"
+                   th:text="'Período: ' + ${dataInicialFormatada} + ' a ' + ${dataFinalFormatada}">
+                    Período: --/--/---- a --/--/----
+                </p>
+            </td>
+        </tr>
+    </table>
+</header>
+
+<section>
+    <h2>Dados do Aluno</h2>
+    <table>
+        <tbody>
+        <tr>
+            <td class="rotulo">Nome</td>
+            <td th:text="${aluno.nome}">-</td>
+        </tr>
+        <tr>
+            <td class="rotulo">Idade</td>
+            <td th:text="${aluno.idade}">-</td>
+        </tr>
+        <tr>
+            <td class="rotulo">Sexo</td>
+            <td th:text="${aluno.sexo}">-</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Tabela 1 - Circunferências</h2>
+
+    <div class="sem-registros" th:if="${#lists.isEmpty(circunferencias)}">
+        Sem registros para comparação
+    </div>
+
+    <table class="registro comparativo" th:unless="${#lists.isEmpty(circunferencias)}">
+        <thead>
+        <tr>
+            <th>Métrica</th>
+            <th th:text="'Data 1 (' + ${dataInicialFormatada} + ')'">Data 1</th>
+            <th th:text="'Data 2 (' + ${dataFinalFormatada} + ')'">Data 2</th>
+            <th>Comparativo / Evolução</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="m : ${circunferencias}">
+            <td class="metrica" th:text="${m.nome()}">-</td>
+            <td class="valor" th:text="${m.valorData1()}">-</td>
+            <td class="valor" th:text="${m.valorData2()}">-</td>
+            <td class="evolucao" th:classappend="${'evolucao-' + m.indicador()}"
+                th:text="${m.evolucao()}">-</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<section class="quebra-pagina">
+    <h2>Tabela 2 - Dobras Cutâneas</h2>
+
+    <div class="sem-registros" th:if="${#lists.isEmpty(dobras)}">
+        Sem registros para comparação
+    </div>
+
+    <table class="registro comparativo" th:unless="${#lists.isEmpty(dobras)}">
+        <thead>
+        <tr>
+            <th>Métrica</th>
+            <th th:text="'Data 1 (' + ${dataInicialFormatada} + ')'">Data 1</th>
+            <th th:text="'Data 2 (' + ${dataFinalFormatada} + ')'">Data 2</th>
+            <th>Comparativo / Evolução</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="m : ${dobras}">
+            <td class="metrica" th:text="${m.nome()}">-</td>
+            <td class="valor" th:text="${m.valorData1()}">-</td>
+            <td class="valor" th:text="${m.valorData2()}">-</td>
+            <td class="evolucao" th:classappend="${'evolucao-' + m.indicador()}"
+                th:text="${m.evolucao()}">-</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+</body>
+</html>

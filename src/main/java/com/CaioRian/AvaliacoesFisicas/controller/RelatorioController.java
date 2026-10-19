@@ -58,6 +58,33 @@ public class RelatorioController {
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(relatorio.conteudo());
     }
 
+    @GetMapping("/aluno/{alunoId}/pdf-comparativo")
+    public ResponseEntity<byte[]> gerarRelatorioComparativoPdf(
+            @PathVariable UUID alunoId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data1,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data2
+    ) {
+
+        RelatorioService.RelatorioPdf relatorio =
+                this.relatorioService.gerarRelatorioComparativoPdf(alunoId, data1, data2);
+
+        String filename = "Relatorio_Comparativo_" + sanitizarNomeArquivo(relatorio.nomeAluno())
+                + "_" + data1 + "_a_" + data2 + ".pdf";
+
+        ContentDisposition contentDisposition = ContentDisposition.attachment()
+                .filename(filename, StandardCharsets.UTF_8)
+                .build();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDisposition(contentDisposition);
+        headers.set(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
+        headers.set(HttpHeaders.PRAGMA, "no-cache");
+        headers.setExpires(0);
+
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(relatorio.conteudo());
+    }
+
     private String sanitizarNomeArquivo(String nome) {
         if (nome == null || nome.isBlank()) {
             return "aluno";

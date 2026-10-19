@@ -2,6 +2,7 @@ package com.CaioRian.AvaliacoesFisicas.repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.CaioRian.AvaliacoesFisicas.models.dto.CircunferenciaResponseDto;
@@ -20,4 +21,6 @@ public interface CircunferenciasRepository extends JpaRepository<Circunferencias
 
     @Query("SELECT c FROM Circunferencias c WHERE c.aluno.id = :alunoId AND c.data = :data")
     List<Circunferencias> findByAlunoIdAndData(@Param("alunoId") UUID alunoId, @Param("data") LocalDate data);
+
+    Optional<Circunferencias> findFirstByAluno_IdAndDataOrderByIdAsc(UUID alunoId, LocalDate data);
 }
