@@ -53,6 +53,13 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.GET, "/dobrasCutaneas/**").hasAnyAuthority("ADMIN", "USER")
                     .requestMatchers("/dobrasCutaneas/**").hasAuthority("ADMIN")
 
+                    .requestMatchers(HttpMethod.GET, "/api/exercicios/**").hasAnyAuthority("ADMIN", "USER")
+                    .requestMatchers("/api/exercicios/**").hasAuthority("ADMIN")
+
+                    .requestMatchers(HttpMethod.GET, "/api/treinos/meus-treinos").hasAuthority("USER")
+                    .requestMatchers(HttpMethod.GET, "/api/treinos/aluno/**").hasAuthority("ADMIN")
+                    .requestMatchers("/api/treinos/**").hasAuthority("ADMIN")
+
                     .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

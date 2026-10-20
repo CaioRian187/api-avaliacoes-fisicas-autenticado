@@ -30,6 +30,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+    @ExceptionHandler(RegistrosNaoEncontradosException.class)
+    public ResponseEntity<Map<String, String>> registrosNaoEncontradosExceptionHandler(RegistrosNaoEncontradosException exception){
+        Map<String, String> response = new HashMap<String, String>();
+        response.put(HttpStatus.NOT_FOUND.toString(), exception.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Map<String, String>> responseStatusExceptionHandle(ResponseStatusException exception){
         Map<String, String> response = new HashMap<String, String>();
