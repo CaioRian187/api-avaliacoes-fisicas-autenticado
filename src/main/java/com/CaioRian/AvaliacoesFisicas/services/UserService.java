@@ -73,7 +73,7 @@ public class UserService {
                             user.getId(),
                             user.getNome(),
                             user.getIdade(),
-                            user.getSexo()
+                            user.getGenero()
                     );
                 }).toList();
     }
@@ -84,7 +84,7 @@ public class UserService {
 
         user.setNome(aluno.nome());
         user.setIdade(aluno.idade());
-        user.setSexo(aluno.sexo());
+        user.setGenero(aluno.genero());
 
         this.userRepository.save(user);
 

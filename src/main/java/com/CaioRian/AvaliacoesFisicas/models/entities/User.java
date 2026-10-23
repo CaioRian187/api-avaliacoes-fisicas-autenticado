@@ -1,5 +1,6 @@
 package com.CaioRian.AvaliacoesFisicas.models.entities;
 
+import com.CaioRian.AvaliacoesFisicas.models.enums.GeneroEnum;
 import com.CaioRian.AvaliacoesFisicas.models.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,7 +29,8 @@ public class User implements UserDetails {
 
     private Integer idade;
 
-    private String sexo;
+    @Enumerated(EnumType.STRING)
+    private GeneroEnum genero;
 
     @Column(unique = true)
     private String login;
@@ -38,19 +40,19 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    public User(String nome, Integer idade, String sexo, String login, String password, UserRole role) {
+    public User(String nome, Integer idade, GeneroEnum genero, String login, String password, UserRole role) {
         this.nome = nome;
         this.idade = idade;
-        this.sexo = sexo;
+        this.genero = genero;
         this.login = login;
         this.password = password;
         this.role = role;
     }
 
-    public User(String nome, Integer idade, String sexo, String login, String password) {
+    public User(String nome, Integer idade, GeneroEnum genero, String login, String password) {
         this.nome = nome;
         this.idade = idade;
-        this.sexo = sexo;
+        this.genero = genero;
         this.login = login;
         this.password = password;
     }

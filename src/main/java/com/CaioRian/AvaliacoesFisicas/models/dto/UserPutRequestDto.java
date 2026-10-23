@@ -1,5 +1,6 @@
 package com.CaioRian.AvaliacoesFisicas.models.dto;
 
+import com.CaioRian.AvaliacoesFisicas.models.enums.GeneroEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -11,8 +12,8 @@ public record UserPutRequestDto(
     @NotNull(message = "A idade não pode ser nula.")
     Integer idade,
 
-    @NotBlank(message = "O sexo não pode ser nulo ou vazio.")
-    String sexo
+    @NotNull(message = "O gênero não pode ser nulo.")
+    GeneroEnum genero
 ){
     
 }

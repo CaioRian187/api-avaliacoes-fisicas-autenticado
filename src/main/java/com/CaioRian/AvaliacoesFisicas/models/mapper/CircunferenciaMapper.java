@@ -38,7 +38,7 @@ public abstract class CircunferenciaMapper {
                         circunferencias.getAluno().getId(),
                         circunferencias.getAluno().getNome(),
                         circunferencias.getAluno().getIdade(),
-                        circunferencias.getAluno().getSexo()
+                        circunferencias.getAluno().getGenero()
                 )
         );
     }

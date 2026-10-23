@@ -26,7 +26,7 @@ public abstract class DobrasCutaneasMapper {
                         dobrasCutaneas.getAluno().getId(),
                         dobrasCutaneas.getAluno().getNome(),
                         dobrasCutaneas.getAluno().getIdade(),
-                        dobrasCutaneas.getAluno().getSexo()
+                        dobrasCutaneas.getAluno().getGenero()
                 )
 
         );

@@ -11,7 +11,7 @@ public abstract class UserMappper {
                 user.getId(),
                 user.getNome(),
                 user.getIdade(),
-                user.getSexo(),
+                user.getGenero(),
                 user.getLogin(),
                 user.getPassword(),
                 user.getRole()
@@ -22,7 +22,7 @@ public abstract class UserMappper {
         return new User(
                 dto.nome(),
                 dto.idade(),
-                dto.sexo(),
+                dto.genero(),
                 dto.login(),
                 dto.password()
         );
