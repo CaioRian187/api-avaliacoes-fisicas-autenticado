@@ -12,6 +12,8 @@ public abstract class UserMappper {
                 user.getNome(),
                 user.getIdade(),
                 user.getGenero(),
+                user.getDeficiencias(),
+                user.getLezoes(),
                 user.getLogin(),
                 user.getPassword(),
                 user.getRole()
@@ -23,6 +25,8 @@ public abstract class UserMappper {
                 dto.nome(),
                 dto.idade(),
                 dto.genero(),
+                dto.deficiencias(),
+                dto.lezoes(),
                 dto.login(),
                 dto.password()
         );

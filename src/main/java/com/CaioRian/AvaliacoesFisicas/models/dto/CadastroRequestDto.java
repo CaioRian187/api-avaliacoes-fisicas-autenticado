@@ -4,6 +4,8 @@ import com.CaioRian.AvaliacoesFisicas.models.enums.GeneroEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.List;
+
 public record CadastroRequestDto(
         @NotBlank(message = "O nome não pode ser nulo ou vazio.")
         String nome,
@@ -16,6 +18,10 @@ public record CadastroRequestDto(
 
         @NotBlank(message = "O login não pode ser nulo ou vazio.")
         String login,
+
+        List<String> deficiencias,
+
+        List<String> lezoes,
 
         @NotBlank(message = "A senha não pode ser nula ou vazia.")
         String password
