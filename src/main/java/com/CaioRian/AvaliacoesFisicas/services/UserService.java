@@ -1,7 +1,7 @@
 package com.CaioRian.AvaliacoesFisicas.services;
 
+import java.util.ArrayList;
 import java.util.List;
-
 import java.util.UUID;
 
 import com.CaioRian.AvaliacoesFisicas.models.dto.CadastroRequestDto;
@@ -85,6 +85,12 @@ public class UserService {
         user.setNome(aluno.nome());
         user.setIdade(aluno.idade());
         user.setGenero(aluno.genero());
+        if (aluno.deficiencias() != null) {
+            user.setDeficiencias(new ArrayList<>(aluno.deficiencias()));
+        }
+        if (aluno.lezoes() != null) {
+            user.setLezoes(new ArrayList<>(aluno.lezoes()));
+        }
 
         this.userRepository.save(user);
 

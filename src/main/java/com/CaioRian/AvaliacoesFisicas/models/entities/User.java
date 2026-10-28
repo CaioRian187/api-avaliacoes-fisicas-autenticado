@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -32,6 +33,16 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private GeneroEnum genero;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_deficiencias", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "descricao")
+    private List<String> deficiencias = new ArrayList<>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_lezoes", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "descricao")
+    private List<String> lezoes = new ArrayList<>();
+
     @Column(unique = true)
     private String login;
 
@@ -40,19 +51,23 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    public User(String nome, Integer idade, GeneroEnum genero, String login, String password, UserRole role) {
+    public User(String nome, Integer idade, GeneroEnum genero, List<String> deficiencias, List<String> lezoes,String login, String password, UserRole role) {
         this.nome = nome;
         this.idade = idade;
         this.genero = genero;
         this.login = login;
+        this.deficiencias = deficiencias != null ? new ArrayList<>(deficiencias) : new ArrayList<>();
+        this.lezoes = lezoes != null ? new ArrayList<>(lezoes) : new ArrayList<>();
         this.password = password;
         this.role = role;
     }
 
-    public User(String nome, Integer idade, GeneroEnum genero, String login, String password) {
+    public User(String nome, Integer idade, GeneroEnum genero, List<String> deficiencias, List<String> lezoes,String login, String password) {
         this.nome = nome;
         this.idade = idade;
         this.genero = genero;
+        this.deficiencias = deficiencias != null ? new ArrayList<>(deficiencias) : new ArrayList<>();
+        this.lezoes = lezoes != null ? new ArrayList<>(lezoes) : new ArrayList<>();
         this.login = login;
         this.password = password;
     }
