@@ -25,13 +25,11 @@ public class CircunferenciasService {
     private final CircunferenciasRepository circunferenciasRepository;
 
     public CircunferenciaResponseDto findById(Long id) {
-        Circunferencias circunferencia = this.circunferenciasRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
+        return this.circunferenciasRepository.findCircunferenciaById(id)
+                .orElseThrow( () -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        "Circunferência de Id: " + id + " não encontrada")
-                );
-
-        return CircunferenciaMapper.toDtoFromEntity(circunferencia);
+                        "Circunferência não encontrada."
+                ));
     }
 
     public List<CircunferenciaResponseDto> findAll(){

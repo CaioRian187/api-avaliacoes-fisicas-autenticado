@@ -23,6 +23,43 @@ public interface CircunferenciasRepository extends JpaRepository<Circunferencias
     """)
     List<Circunferencias> findAllByAlunoId(@Param("alunoId") UUID alunoId);
 
+    @Query("""
+        SELECT new com.CaioRian.AvaliacoesFisicas.models.dto.CircunferenciaResponseDto(
+            c.id,
+            c.data,
+            c.altura,
+            c.peso,
+            c.imc,
+            c.ombro,
+            c.cintura,
+            c.quadril,
+            c.peitoral,
+            c.abdommen,
+            c.coxaProximalEsquerda,
+            c.coxaProximalDireita,
+            c.coxaMedialEsquerda,
+            c.coxaMedialDireita,
+            c.coxaDistalEsquerda,
+            c.coxaDistalDireita,
+            c.panturrilhaEsquerda,
+            c.panturrilhaDireita,
+            c.bracoRelaxadoEsquerdo,
+            c.bracoRelaxadoDireito,
+            c.bracoContraidoEsquerdo,
+            c.bracoContraidoDireito,
+            c.antebraçoEsquerdo,
+            c.antebraçoDireito,
+            a.id,
+            a.nome,
+            a.idade,
+            a.genero
+        )
+        FROM Circunferencias c
+        LEFT JOIN c.aluno a
+        WHERE c.id = :id
+    """)
+    Optional<CircunferenciaResponseDto> findCircunferenciaById(Long id);
+
     @Query("SELECT c FROM Circunferencias c WHERE c.aluno.id = :alunoId AND c.data = :data")
     List<Circunferencias> findByAlunoIdAndData(@Param("alunoId") UUID alunoId, @Param("data") LocalDate data);
 
