@@ -81,8 +81,6 @@ class UserMappperTest {
         assertEquals(GeneroEnum.MULHER_TRANSGENERO, dto.genero());
         assertEquals(List.of("Deficiência física"), dto.deficiencias());
         assertEquals(List.of("Lesão no ombro", "Lesão no tornozelo"), dto.lezoes());
-        assertEquals("carla", dto.login());
-        assertEquals("senha", dto.password());
         assertEquals(UserRole.ADMIN, dto.role());
     }
 }

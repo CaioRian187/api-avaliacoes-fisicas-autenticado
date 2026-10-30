@@ -16,7 +16,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 public interface CircunferenciasRepository extends JpaRepository<Circunferencias, Long>{
 
-    @Query("SELECT c FROM Circunferencias c WHERE c.aluno.id = :alunoId")
+    @Query("""
+        SELECT c FROM Circunferencias c
+        WHERE c.aluno.id = :alunoId
+        ORDER BY c.data ASC
+    """)
     List<Circunferencias> findAllByAlunoId(@Param("alunoId") UUID alunoId);
 
     @Query("SELECT c FROM Circunferencias c WHERE c.aluno.id = :alunoId AND c.data = :data")
