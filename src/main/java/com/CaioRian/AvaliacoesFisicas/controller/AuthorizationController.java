@@ -30,13 +30,8 @@ public class AuthorizationController {
     private final TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto data){
-        var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
-        var auth = this.authenticationManager.authenticate(usernamePassword);
-
-        var token = this.tokenService.generateToken((User) auth.getPrincipal());
-
-        return ResponseEntity.ok(new LoginResponseDto(token));
+    public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto dto){
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.login(dto));
     }
 
     @PostMapping("/cadastro")

@@ -4,21 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.CaioRian.AvaliacoesFisicas.models.dto.CadastroRequestDto;
-import com.CaioRian.AvaliacoesFisicas.models.dto.UserResponseDto;
+import com.CaioRian.AvaliacoesFisicas.models.dto.*;
 import com.CaioRian.AvaliacoesFisicas.models.enums.UserRole;
 import com.CaioRian.AvaliacoesFisicas.models.mapper.UserMappper;
 import com.CaioRian.AvaliacoesFisicas.models.projections.UserProjection;
+import com.CaioRian.AvaliacoesFisicas.security.TokenService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.CaioRian.AvaliacoesFisicas.models.entities.User;
-import com.CaioRian.AvaliacoesFisicas.models.dto.UserPutRequestDto;
 import com.CaioRian.AvaliacoesFisicas.repository.UserRepository;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -26,6 +29,8 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final AuthenticationManager authenticationManager;
+    private final TokenService tokenService;
 
     public UserResponseDto cadastrar(CadastroRequestDto dto){
 
@@ -37,6 +42,15 @@ public class UserService {
         this.userRepository.save(newUser);
 
         return UserMappper.fromEntityToDto(newUser);
+    }
+
+    public LoginResponseDto login(LoginRequestDto dto){
+        var usernamePassword = new UsernamePasswordAuthenticationToken(dto.login(), dto.password());
+        var auth = this.authenticationManager.authenticate(usernamePassword);
+
+        var token = this.tokenService.generateToken((User) auth.getPrincipal());
+
+        return new LoginResponseDto(token);
     }
 
     public List<UserResponseDto> findByNomeContainingIgnoreCase(String nome){
