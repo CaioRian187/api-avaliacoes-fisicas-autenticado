@@ -14,8 +14,6 @@ public abstract class UserMappper {
                 user.getGenero(),
                 user.getDeficiencias(),
                 user.getLezoes(),
-                user.getLogin(),
-                user.getPassword(),
                 user.getRole()
         );
     }

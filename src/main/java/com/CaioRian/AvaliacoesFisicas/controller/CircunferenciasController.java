@@ -36,8 +36,7 @@ public class CircunferenciasController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CircunferenciaResponseDto> findById(@PathVariable Long id){
-        CircunferenciaResponseDto circunferencias = this.circunferenciasService.findById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(circunferencias);
+        return ResponseEntity.status(HttpStatus.OK).body(this.circunferenciasService.findById(id));
     }
 
     @GetMapping
