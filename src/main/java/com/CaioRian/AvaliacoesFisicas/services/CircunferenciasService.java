@@ -33,14 +33,12 @@ public class CircunferenciasService {
     }
 
     public List<CircunferenciaResponseDto> findAll(){
-        List<CircunferenciaResponseDto> list = this.circunferenciasRepository.findAll()
-                .stream()
-                .map(CircunferenciaMapper::toDtoFromEntity).toList();
+        List<CircunferenciaResponseDto> list = this.circunferenciasRepository.findAllCircunferencias();
 
         if (list.isEmpty()){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
-                    "Nehuma circunferência encontrada"
+                    "Nehuma circunferência encontrada."
             );
         }
         return list;
