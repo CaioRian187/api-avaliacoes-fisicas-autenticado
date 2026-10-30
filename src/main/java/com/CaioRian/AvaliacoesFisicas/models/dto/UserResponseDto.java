@@ -13,8 +13,6 @@ public record UserResponseDto(
         GeneroEnum genero,
         List<String> deficiencias,
         List<String> lezoes,
-        String login,
-        String password,
         UserRole role
 ) {
 
