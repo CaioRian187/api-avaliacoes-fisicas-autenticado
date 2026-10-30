@@ -65,13 +65,13 @@ public class RelatorioService {
         LocalDate dataFinal = data1.isAfter(data2) ? data1 : data2;
 
         Circunferencias circunferenciasInicial =
-                this.circunferenciasRepository.findFirstByAluno_IdAndDataOrderByIdAsc(alunoId, dataInicial)
+                this.circunferenciasRepository.findCircunferenciaByAlunoIdAndData(alunoId, dataInicial)
                         .orElseThrow(() -> new RegistrosNaoEncontradosException(
                                 "Avaliação de circunferências não encontrada para o aluno na data "
                                         + dataInicial.format(DATE_FORMAT) + "."));
 
         Circunferencias circunferenciasFinal =
-                this.circunferenciasRepository.findFirstByAluno_IdAndDataOrderByIdAsc(alunoId, dataFinal)
+                this.circunferenciasRepository.findCircunferenciaByAlunoIdAndData(alunoId, dataFinal)
                         .orElseThrow(() -> new RegistrosNaoEncontradosException(
                                 "Avaliação de circunferências não encontrada para o aluno na data "
                                         + dataFinal.format(DATE_FORMAT) + "."));

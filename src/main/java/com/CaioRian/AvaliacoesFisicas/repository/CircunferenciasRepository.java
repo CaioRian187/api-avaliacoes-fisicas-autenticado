@@ -100,5 +100,11 @@ public interface CircunferenciasRepository extends JpaRepository<Circunferencias
     @Query("SELECT c FROM Circunferencias c WHERE c.aluno.id = :alunoId AND c.data = :data")
     List<Circunferencias> findByAlunoIdAndData(@Param("alunoId") UUID alunoId, @Param("data") LocalDate data);
 
-    Optional<Circunferencias> findFirstByAluno_IdAndDataOrderByIdAsc(UUID alunoId, LocalDate data);
+    @Query("""
+        SELECT c
+        FROM Circunferencias c
+        WHERE c.aluno.id = :alunoId AND c.data = :data
+        ORDER BY c.id ASC
+    """)
+    Optional<Circunferencias> findCircunferenciaByAlunoIdAndData(@Param("alunoId") UUID alunoId, @Param("data") LocalDate data);
 }
